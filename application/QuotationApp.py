@@ -176,4 +176,3 @@ class App(tk.Tk):
             self.chart.legend()
             self.figure_canvas.draw()
 
-        
