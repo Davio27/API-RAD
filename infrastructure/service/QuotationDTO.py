@@ -3,8 +3,8 @@ from dataclasses import dataclass
 
 @dataclass
 class QuotationDTO:
-    xData_dolar: list
-    yData_dolar: list
-    yData2_dolar: list
-    yData3_dolar: list
-    yData4_dolar: list
+    date_quotation: list
+    quotation_for_bid: list
+    quotation_for_ask: list
+    quotation_for_low: list
+    quotation_for_high: list

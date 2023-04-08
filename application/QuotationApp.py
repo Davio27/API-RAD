@@ -49,22 +49,9 @@ class App(tk.Tk):
     def cmdExecutardolar(self):
 
         quotations = get_quotation(DOLLAR, NUMBER_OF_DAYS)
-        quotationMapped = QuotationMapper.to_quotation_DTO(quotations)
+        quotations_mapped = QuotationMapper.to_DTO(quotations)
 
-        self.chart.clear()
-
-        self.chart.plot(quotationMapped.xData_dolar, quotationMapped.yData_dolar, marker='o', label='Compra')
-        self.chart.plot(quotationMapped.xData_dolar, quotationMapped.yData2_dolar, marker='o', label='Venda')
-        self.chart.plot(quotationMapped.xData_dolar, quotationMapped.yData3_dolar, marker='o', label='Mínimo')
-        self.chart.plot(quotationMapped.xData_dolar, quotationMapped.yData4_dolar, marker='o', label='Máximo')
-
-        self.chart.set_title("Dolar")
-        self.chart.set_xlabel('Dias')
-        self.chart.set_ylabel('BRL')
-        self.chart.grid()
-        self.chart.legend()
-
-        self.figure_canvas.draw()
+        plot_quotation(self, quotations_mapped)
 
     def cmdExecutareuro(self):
 
@@ -143,3 +130,20 @@ class App(tk.Tk):
 
 def create_button(self, text, command):
     return ttk.Button(self, text=text, command=command).pack(fill="x", side="left", expand=True, padx=5)
+
+
+def plot_quotation(self, quotations_mapped):
+    self.chart.clear()
+
+    self.chart.plot(quotations_mapped.date_quotation, quotations_mapped.quotation_for_bid, marker='o', label='Compra')
+    self.chart.plot(quotations_mapped.date_quotation, quotations_mapped.quotation_for_ask, marker='o', label='Venda')
+    self.chart.plot(quotations_mapped.date_quotation, quotations_mapped.quotation_for_low, marker='o', label='Mínimo')
+    self.chart.plot(quotations_mapped.date_quotation, quotations_mapped.quotation_for_high, marker='o', label='Máximo')
+
+    self.chart.set_title("Dolar")
+    self.chart.set_xlabel('Dias')
+    self.chart.set_ylabel('BRL')
+    self.chart.grid()
+    self.chart.legend()
+
+    self.figure_canvas.draw()
