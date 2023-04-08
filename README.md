@@ -3,7 +3,7 @@
 This application shows the Quotation of Dollar, Euro and
 Bitcoin in the last 10 days
 
-# Prerequisites
+# Prerequisites :heavy_check_mark:
 You need to have installed and configured the following:
     
 - `Python` Version 3.x
