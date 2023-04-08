@@ -175,9 +175,5 @@ class App(tk.Tk):
             self.chart.grid()
             self.chart.legend()
             self.figure_canvas.draw()
+
         
-        
-        
-if __name__ == "__main__":
-    app = App()
-    app.mainloop()
