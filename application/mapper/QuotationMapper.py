@@ -3,7 +3,7 @@ from datetime import datetime as dt
 
 
 def to_DTO(quotations):
-    quotation_DTO = QuotationDTO([], [], [], [], [])
+    quotation_DTO = QuotationDTO(quotations.json()[0]['name'], [], [], [], [], [])
 
     for x in quotations.json():
         timestamp = int(x['timestamp'])
