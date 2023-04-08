@@ -4,8 +4,11 @@ This application shows the Quotation of Dollar, Euro and
 Bitcoin in the last 10 days
 
 # Prerequisites :heavy_check_mark:
-| :warning: WARNING | we strongly recommend you to use PyCharm IDE |
-|-------------------|:---------------------------------------------|
+
+| :warning: WARNING    | We strongly recommend you to use [PyCharm IDE](https://www.jetbrains.com/pycharm/download/#section=linux)! |
+|----------------------|:----------------------------------------------|
+
+
 You need to have installed and configured the following:
     
 - `Python` Version 3.x
