@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import matplotlib
 import requests
 from datetime import datetime as dt
+from infrastructure.gateway.AweSomeAPIGateway import get_quotation
 
 matplotlib.use("TkAgg")
 from matplotlib.figure import Figure
@@ -68,7 +69,7 @@ class App(tk.Tk):
         # Obter os dados do gráfico do dólar
         # https://economia.awesomeapi.com.br/json/daily/USD-BRL/10
 
-        cotacoes_dolar = requests.get(f"https://economia.awesomeapi.com.br/json/daily/USD-BRL/{self.current_value.get()}")
+        cotacoes_dolar = get_quotation()
         xData_dolar = []
         yData_dolar = []
         yData2_dolar = []
@@ -106,14 +107,14 @@ class App(tk.Tk):
         # # Obter os dados do gráfico do euro
         # # https://economia.awesomeapi.com.br/json/daily/EUR-BRL/10
 
-        cotacoes_euro = requests.get(f"https://economia.awesomeapi.com.br/json/daily/EUR-BRL/{self.current_value.get()}")
+        quotation = get_quotation()
         xData_euro = []
         yData_euro = []
         yData2_euro = []
         yData3_euro = []
         yData4_euro = []
         
-        for x in cotacoes_euro.json():
+        for x in quotation.json():
             ts = int(x['timestamp'])
             xEixo = dt.utcfromtimestamp(ts).strftime('%d/%m\n%Y')
             xData_euro.insert(0, xEixo)
