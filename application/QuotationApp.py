@@ -7,6 +7,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg,
 )
+from application.mapper import QuotationMapper
 
 matplotlib.use("TkAgg")
 NUMBER_OF_DAYS = 10
@@ -47,39 +48,21 @@ class App(tk.Tk):
 
     def cmdExecutardolar(self):
 
-        # Obter os dados do gráfico do dólar
-        # https://economia.awesomeapi.com.br/json/daily/USD-BRL/10
+        quotations = get_quotation(DOLLAR, NUMBER_OF_DAYS)
+        quotationMapped = QuotationMapper.to_quotation_DTO(quotations)
 
-        cotacoes_dolar = get_quotation(DOLLAR, NUMBER_OF_DAYS)
-        xData_dolar = []
-        yData_dolar = []
-        yData2_dolar = []
-        yData3_dolar = []
-        yData4_dolar = []
+        self.chart.clear()
 
-        for x in cotacoes_dolar.json():
-            ts = int(x['timestamp'])
-            xEixo = dt.utcfromtimestamp(ts).strftime('%d/%m\n%Y')
-            xData_dolar.insert(0, xEixo)
-            yData_dolar.insert(0, float(x['bid']))
-            yData2_dolar.insert(0, float(x['ask']))
-            yData3_dolar.insert(0, float(x['low']))
-            yData4_dolar.insert(0, float(x['high']))
+        self.chart.plot(quotationMapped.xData_dolar, quotationMapped.yData_dolar, marker='o', label='Compra')
+        self.chart.plot(quotationMapped.xData_dolar, quotationMapped.yData2_dolar, marker='o', label='Venda')
+        self.chart.plot(quotationMapped.xData_dolar, quotationMapped.yData3_dolar, marker='o', label='Mínimo')
+        self.chart.plot(quotationMapped.xData_dolar, quotationMapped.yData4_dolar, marker='o', label='Máximo')
 
-            # def plot_chart(self, title):
-
-            self.chart.clear()
-
-            self.chart.plot(xData_dolar, yData_dolar, marker='o', label='compra')
-            self.chart.plot(xData_dolar, yData2_dolar, marker='o', label='venda')
-            self.chart.plot(xData_dolar, yData3_dolar, marker='o', label='mínimo')
-            self.chart.plot(xData_dolar, yData4_dolar, marker='o', label='máximo')
-
-            self.chart.set_title("Dolar")
-            self.chart.set_xlabel('Quantidade de Dias')
-            self.chart.set_ylabel('BRL')
-            self.chart.grid()
-            self.chart.legend()
+        self.chart.set_title("Dolar")
+        self.chart.set_xlabel('Dias')
+        self.chart.set_ylabel('BRL')
+        self.chart.grid()
+        self.chart.legend()
 
         self.figure_canvas.draw()
 
