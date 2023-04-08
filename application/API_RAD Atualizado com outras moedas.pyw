@@ -6,7 +6,6 @@ import requests
 from datetime import datetime as dt
 
 matplotlib.use("TkAgg")
-
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg,
@@ -20,7 +19,7 @@ class App(tk.Tk):
         self.title('API Cotação')
         
         # Carregue a imagem
-        image = Image.open('C:\\Users\\davic\\OneDrive\\Documentos\\main project\\examples\\bg_gradient.jpg')
+        image = Image.open('asset/image/background.png')
         
         # Converta a imagem em um objeto de imagem tkinter
         photo = ImageTk.PhotoImage(image)
