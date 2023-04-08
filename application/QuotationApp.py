@@ -8,12 +8,10 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg,
 )
 from application.mapper import QuotationMapper
+from application.model.enum.Currencies import Currencies
 
 matplotlib.use("TkAgg")
 NUMBER_OF_DAYS = 10
-BITCOIN = 'BTC'
-DOLLAR = 'USD'
-EURO = 'EUR'
 
 
 class App(tk.Tk):
@@ -46,9 +44,9 @@ class App(tk.Tk):
         create_button(self, "Mostrar Gráfico do Euro", self.cmdExecutareuro)
         create_button(self, "Mostrar Gráfico do Bitcoin", self.cmdExecutarbit)
 
-    def cmdExecutardolar(self):
+    def cmdExecutardolar(self, currency: Currencies = Currencies.DOLLAR):
 
-        quotations = get_quotation(DOLLAR, NUMBER_OF_DAYS)
+        quotations = get_quotation(currency.value, NUMBER_OF_DAYS)
         quotations_mapped = QuotationMapper.to_DTO(quotations)
 
         plot_quotation(self, quotations_mapped)
