@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 import matplotlib
-from datetime import datetime as dt
 from infrastructure.gateway.AweSomeAPIGateway import get_quotation
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (
@@ -38,92 +37,32 @@ class App(tk.Tk):
         # criar o gráfico
         self.chart = self.figure.add_subplot()
 
-        self.cmdExecutardolar()
+        self.showDollar()
 
-        create_button(self, "Mostrar Gráfico do Dólar", self.cmdExecutardolar)
-        create_button(self, "Mostrar Gráfico do Euro", self.cmdExecutareuro)
-        create_button(self, "Mostrar Gráfico do Bitcoin", self.cmdExecutarbit)
+        create_button(self, "Mostrar Gráfico do Dólar", self.showDollar)
+        create_button(self, "Mostrar Gráfico do Euro", self.showEuro)
+        create_button(self, "Mostrar Gráfico do Bitcoin", self.showBitcoin)
 
-    def cmdExecutardolar(self, currency: Currencies = Currencies.DOLLAR):
+    def showDollar(self, currency: Currencies = Currencies.DOLLAR):
 
         quotations = get_quotation(currency.value, NUMBER_OF_DAYS)
         quotations_mapped = QuotationMapper.to_DTO(quotations)
 
         plot_quotation(self, quotations_mapped)
 
-    def cmdExecutareuro(self):
+    def showEuro(self, currency: Currencies = Currencies.EURO):
 
-        # # Obter os dados do gráfico do euro
-        # # https://economia.awesomeapi.com.br/json/daily/EUR-BRL/10
+        quotations = get_quotation(currency.value, NUMBER_OF_DAYS)
+        quotations_mapped = QuotationMapper.to_DTO(quotations)
 
-        quotation = get_quotation(EURO, NUMBER_OF_DAYS)
-        xData_euro = []
-        yData_euro = []
-        yData2_euro = []
-        yData3_euro = []
-        yData4_euro = []
+        plot_quotation(self, quotations_mapped)
 
-        for x in quotation.json():
-            ts = int(x['timestamp'])
-            xEixo = dt.utcfromtimestamp(ts).strftime('%d/%m\n%Y')
-            xData_euro.insert(0, xEixo)
-            yData_euro.insert(0, float(x['bid']))
-            yData2_euro.insert(0, float(x['ask']))
-            yData3_euro.insert(0, float(x['low']))
-            yData4_euro.insert(0, float(x['high']))
+    def showBitcoin(self, currency: Currencies = Currencies.BITCOIN):
 
-            # def plot_chart(self, title):
+        quotations = get_quotation(currency.value, NUMBER_OF_DAYS)
+        quotations_mapped = QuotationMapper.to_DTO(quotations)
 
-            self.chart.clear()
-
-            self.chart.plot(xData_euro, yData_euro, marker='o', label='compra')
-            self.chart.plot(xData_euro, yData2_euro, marker='o', label='venda')
-            self.chart.plot(xData_euro, yData3_euro, marker='o', label='mínimo')
-            self.chart.plot(xData_euro, yData4_euro, marker='o', label='máximo')
-
-            self.chart.set_title("Euro")
-            self.chart.set_xlabel('Quantidade de Dias')
-            self.chart.set_ylabel('BRL')
-            self.chart.grid()
-            self.chart.legend()
-
-            self.figure_canvas.draw()
-
-    def cmdExecutarbit(self):
-
-        # Obter os dados do gráfico do bitcoin
-        # https://economia.awesomeapi.com.br/json/daily/EUR-BRL/10
-
-        quotation = get_quotation(BITCOIN, NUMBER_OF_DAYS)
-
-        xData_bitcoin = []
-        yData_bitcoin = []
-        yData2_bitcoin = []
-        yData3_bitcoin = []
-        yData4_bitcoin = []
-
-        for x in quotation.json():
-            ts = int(x['timestamp'])
-            xEixo = dt.utcfromtimestamp(ts).strftime('%d/%m\n%Y')
-            xData_bitcoin.insert(0, xEixo)
-            yData_bitcoin.insert(0, float(x['bid']))
-            yData2_bitcoin.insert(0, float(x['ask']))
-            yData3_bitcoin.insert(0, float(x['low']))
-            yData4_bitcoin.insert(0, float(x['high']))
-
-            # def plot_chart(self, title):
-            self.chart.clear()
-
-            self.chart.plot(xData_bitcoin, yData_bitcoin, marker='o', label='compra')
-            self.chart.plot(xData_bitcoin, yData2_bitcoin, marker='o', label='venda')
-            self.chart.plot(xData_bitcoin, yData3_bitcoin, marker='o', label='mínimo')
-            self.chart.plot(xData_bitcoin, yData4_bitcoin, marker='o', label='máximo')
-            self.chart.set_title("Bitcon")
-            self.chart.set_xlabel('Quantidade de Dias')
-            self.chart.set_ylabel('BRL')
-            self.chart.grid()
-            self.chart.legend()
-            self.figure_canvas.draw()
+        plot_quotation(self, quotations_mapped)
 
 
 def create_button(self, text, command):
@@ -138,7 +77,7 @@ def plot_quotation(self, quotations_mapped):
     self.chart.plot(quotations_mapped.date_quotation, quotations_mapped.quotation_for_low, marker='o', label='Mínimo')
     self.chart.plot(quotations_mapped.date_quotation, quotations_mapped.quotation_for_high, marker='o', label='Máximo')
 
-    self.chart.set_title("Dolar")
+    self.chart.set_title(quotations_mapped.currency)
     self.chart.set_xlabel('Dias')
     self.chart.set_ylabel('BRL')
     self.chart.grid()
