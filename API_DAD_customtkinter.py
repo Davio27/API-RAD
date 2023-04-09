@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 import matplotlib
-# import matplotlib.image as mpimg
+import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
@@ -25,9 +25,6 @@ class App(ctk.CTk):
         super().__init__()
         self.geometry("1500x1000")
         self.title('API Cotação')
-        
-        
-        
         
         # # Carregue a imagem
         # image = Image.open('C:\\Users\\davic\\OneDrive\\Documentos\\main project\\examples\\bg_gradient.jpg')
@@ -51,6 +48,7 @@ class App(ctk.CTk):
 
         # criar o gráfico
         self.chart = self.figure.add_subplot()
+        
 
         self.current_value = tk.StringVar(value=10)
 
@@ -125,7 +123,8 @@ class App(ctk.CTk):
             self.chart.plot(xData_dolar, yData3_dolar, marker = 'o', label='mínimo')
             self.chart.plot(xData_dolar, yData4_dolar, marker = 'o', label='máximo')
             self.chart.set_title("Dolar")
-            self.chart.set_xlabel('Quantidade de Dias')
+            self.chart.set_xlabel('⬇️Quantidade de Dias⬇️')
+            self.chart.xaxis.set_label_coords(0.0, -0.1)
             self.chart.set_ylabel('BRL')
             self.chart.grid()
             self.chart.legend()
@@ -160,7 +159,8 @@ class App(ctk.CTk):
             self.chart.plot(xData_euro, yData3_euro, marker = 'o', label='mínimo')
             self.chart.plot(xData_euro, yData4_euro, marker = 'o', label='máximo')
             self.chart.set_title("Euro")
-            self.chart.set_xlabel('Quantidade de Dias')
+            self.chart.set_xlabel('⬇️Quantidade de Dias⬇️')
+            self.chart.xaxis.set_label_coords(0.0, -0.1)
             self.chart.set_ylabel('BRL')
             self.chart.grid()
             self.chart.legend()
@@ -195,7 +195,8 @@ class App(ctk.CTk):
             self.chart.plot(xData_bitcoin, yData3_bitcoin, marker = 'o', label='mínimo')
             self.chart.plot(xData_bitcoin, yData4_bitcoin, marker = 'o', label='máximo')
             self.chart.set_title("Bitcon")
-            self.chart.set_xlabel('Quantidade de Dias')
+            self.chart.set_xlabel('⬇️Quantidade de Dias⬇️')
+            self.chart.xaxis.set_label_coords(0.0, -0.1)
             self.chart.set_ylabel('BRL')
             self.chart.grid()
             self.chart.legend()
