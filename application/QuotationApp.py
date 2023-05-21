@@ -6,8 +6,8 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg,
 )
-from infrastructure.db.dollarRepository import get_quotation_by_day
-from infrastructure.db.dollarRepository import insert
+from infrastructure.db.Repository import get_quotation_by_day
+from infrastructure.db.Repository import insert
 from datetime import date
 from datetime import timedelta
 from infrastructure.service.QuotationDTO import QuotationDTO
