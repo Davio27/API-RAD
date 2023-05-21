@@ -77,7 +77,7 @@ def get_quotation(currency: Currencies):
         last10Days.append(date.today() - timedelta(days=days))
 
     for day in last10Days:
-        if day.strftime('%A') == 'Saturday' or day.strftime('%A') == 'Sunday':
+        if (day.strftime('%A') == 'Saturday' or day.strftime('%A') == 'Sunday') and currency.name != 'BITCOIN':
             continue
 
         quotationDB = get_quotation_by_day(currency.name.lower(), str(day))
