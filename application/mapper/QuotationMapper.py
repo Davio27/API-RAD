@@ -7,7 +7,7 @@ def to_DTO(quotations):
 
     for x in quotations.json():
         timestamp = int(x['timestamp'])
-        date = dt.utcfromtimestamp(timestamp).strftime('%d/%m\n%Y')
+        date = dt.utcfromtimestamp(timestamp).strftime('%d/%m/%Y')
         quotation_DTO.date_quotation.insert(0, date)
         quotation_DTO.quotation_for_bid.insert(0, float(x['bid']))
         quotation_DTO.quotation_for_ask.insert(0, float(x['ask']))
