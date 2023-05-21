@@ -1,13 +1,20 @@
 import tkinter as tk
 from tkinter import ttk
 import matplotlib
-from infrastructure.gateway.AweSomeAPIGateway import get_quotation
+from infrastructure.gateway.AweSomeAPIGateway import get_quotation_one_day
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg,
 )
-from application.mapper import QuotationMapper
+from infrastructure.db.dollarRepository import get_quotation_by_day
+from infrastructure.db.dollarRepository import insert
+from datetime import date
+from datetime import timedelta
+from infrastructure.service.QuotationDTO import QuotationDTO
+from datetime import datetime as dt
+from application.entities.CurrencyQuotationEntity import CurrencyQuotationEntity
 from application.model.enum.Currencies import Currencies
+from application.model.enum.QuotationType import QuotationType
 
 matplotlib.use("TkAgg")
 NUMBER_OF_DAYS = 10
@@ -18,51 +25,27 @@ class App(tk.Tk):
         super().__init__()
         self.title('Cotação')
 
-        # APARENTEMENTE ESSE TRECHO DE CODE NÃO ESTÁ FAZENDO NADA
-        # obtem img, converte img p/ objeto tkinter, cria widget Label c/ imagem e exibe na janela
-        # image = Image.open('asset/image/background.png')
-        # photo = ImageTk.PhotoImage(image)
-        # label = tk.Label(self, image=photo)
-        # label.place(x=0, y=0, relwidth=1, relheight=1)
-
         # criar uma figura
         self.figure = Figure(figsize=(15, 6), dpi=100)
         self.figure_canvas = FigureCanvasTkAgg(self.figure, self)
         self.figure_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-        # ESSE AQUI PARECE NÃO FAZER NADA TAMBEM
-        # criar a barra de ferramentas
-        # NavigationToolbar2Tk(self.figure_canvas, self)
-
         # criar o gráfico
         self.chart = self.figure.add_subplot()
-
         self.showDollar()
 
         create_button(self, "Mostrar Gráfico do Dólar", self.showDollar)
         create_button(self, "Mostrar Gráfico do Euro", self.showEuro)
         create_button(self, "Mostrar Gráfico do Bitcoin", self.showBitcoin)
 
-    def showDollar(self, currency: Currencies = Currencies.DOLLAR):
+    def showDollar(self):
+        plot_quotation(self, get_quotation(Currencies.DOLLAR))
 
-        quotations = get_quotation(currency.value, NUMBER_OF_DAYS)
-        quotations_mapped = QuotationMapper.to_DTO(quotations)
+    def showEuro(self):
+        plot_quotation(self, get_quotation(Currencies.EURO))
 
-        plot_quotation(self, quotations_mapped)
-
-    def showEuro(self, currency: Currencies = Currencies.EURO):
-
-        quotations = get_quotation(currency.value, NUMBER_OF_DAYS)
-        quotations_mapped = QuotationMapper.to_DTO(quotations)
-
-        plot_quotation(self, quotations_mapped)
-
-    def showBitcoin(self, currency: Currencies = Currencies.BITCOIN):
-
-        quotations = get_quotation(currency.value, NUMBER_OF_DAYS)
-        quotations_mapped = QuotationMapper.to_DTO(quotations)
-
-        plot_quotation(self, quotations_mapped)
+    def showBitcoin(self):
+        plot_quotation(self, get_quotation(Currencies.BITCOIN))
 
 
 def create_button(self, text, command):
@@ -84,3 +67,81 @@ def plot_quotation(self, quotations_mapped):
     self.chart.legend()
 
     self.figure_canvas.draw()
+
+
+def get_quotation(currency: Currencies):
+    quotationDTO = QuotationDTO(currency.name, [], [], [], [], [])
+
+    last10Days = []
+    for days in range(0, NUMBER_OF_DAYS):
+        last10Days.append(date.today() - timedelta(days=days))
+
+    for day in last10Days:
+        if day.strftime('%A') == 'Saturday' or day.strftime('%A') == 'Sunday':
+            continue
+
+        quotationDB = get_quotation_by_day(currency.name.lower(), str(day))
+
+        if len(quotationDB) > 0 and have_all_type(quotationDB):
+            quotationDTO.date_quotation.insert(0, quotationDB[0][1].strftime('%d/%m/%Y'))
+            quotationDTO.quotation_for_bid.insert(0, get_quotation_by_type(quotationDB, "COMPRA"))
+            quotationDTO.quotation_for_ask.insert(0, get_quotation_by_type(quotationDB, "VENDA"))
+            quotationDTO.quotation_for_low.insert(0, get_quotation_by_type(quotationDB, "MINIMO"))
+            quotationDTO.quotation_for_high.insert(0, get_quotation_by_type(quotationDB, "MAXIMO"))
+
+        else:
+            response = get_quotation_one_day(currency.value, str(day.year), day.month, day.day).json()
+            if len(response) < 1:
+                continue
+            else:
+                response = response[0]
+            timestamp = int(response['timestamp'])
+            dateX = dt.utcfromtimestamp(timestamp).strftime('%d/%m/%Y')
+            quotationDTO.date_quotation.insert(0, dateX)
+            quotationDTO.quotation_for_bid.insert(0, float(response['bid']))
+            quotationDTO.quotation_for_ask.insert(0, float(response['ask']))
+            quotationDTO.quotation_for_low.insert(0, float(response['low']))
+            quotationDTO.quotation_for_high.insert(0, float(response['high']))
+
+            insert_new_quotation_DB(currency, response)
+
+    return quotationDTO
+
+
+def insert_new_quotation_DB(currency, response):
+    for x in [['bid', QuotationType.COMPRA],
+              ['ask', QuotationType.VENDA],
+              ['low', QuotationType.MINIMO],
+              ['high', QuotationType.MAXIMO]]:
+        insert(
+            CurrencyQuotationEntity(
+                str(currency.name),
+                str(dt.utcfromtimestamp(int(response['timestamp'])).strftime('%Y-%m-%d')),
+                response[x[0]],
+                x[1]
+            )
+        )
+
+
+def have_all_type(quotation):
+    hasCompra = False
+    hasVenda = False
+    hasMaximo = False
+    hasMinimo = False
+
+    for c in quotation:
+        if c[3] == 'COMPRA':
+            hasCompra = True
+        elif c[3] == 'VENDA':
+            hasVenda = True
+        elif c[3] == 'MAXIMO':
+            hasMaximo = True
+        elif c[3] == 'MINIMO':
+            hasMinimo = True
+
+    return hasCompra and hasVenda and hasMinimo and hasMaximo
+
+
+def get_quotation_by_type(quotations, typeQuotation):
+    quotation = [quotation for quotation in quotations if quotation[3] == typeQuotation]
+    return float(quotation[0][2])
