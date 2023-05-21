@@ -124,22 +124,22 @@ def insert_new_quotation_DB(currency, response):
 
 
 def have_all_type(quotation):
-    hasCompra = False
-    hasVenda = False
-    hasMaximo = False
-    hasMinimo = False
+    existCompra = False
+    existVenda = False
+    existMaximo = False
+    existMinimo = False
 
     for c in quotation:
         if c[3] == 'COMPRA':
-            hasCompra = True
+            existCompra = True
         elif c[3] == 'VENDA':
-            hasVenda = True
+            existVenda = True
         elif c[3] == 'MAXIMO':
-            hasMaximo = True
+            existMaximo = True
         elif c[3] == 'MINIMO':
-            hasMinimo = True
+            existMinimo = True
 
-    return hasCompra and hasVenda and hasMinimo and hasMaximo
+    return existCompra and existVenda and existMinimo and existMaximo
 
 
 def get_quotation_by_type(quotations, typeQuotation):
