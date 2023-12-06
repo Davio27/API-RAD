@@ -145,3 +145,5 @@ def have_all_type(quotation):
 def get_quotation_by_type(quotations, typeQuotation):
     quotation = [quotation for quotation in quotations if quotation[3] == typeQuotation]
     return float(quotation[0][2])
+
+//fim 
